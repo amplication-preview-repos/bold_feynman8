@@ -1,0 +1,69 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?  @unique
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  password  String
+  roles     Json
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
+
+model Property {
+  address          String?
+  agentAssignments AgentAssignment[]
+  appointments     Appointment[]
+  createdAt        DateTime               @default(now())
+  id               String                 @id @default(cuid())
+  price            Float?
+  size             Int?
+  title            String?
+  typeField        EnumPropertyTypeField?
+  updatedAt        DateTime               @updatedAt
+}
+
+model Client {
+  appointments Appointment[]
+  createdAt    DateTime      @default(now())
+  email        String?
+  firstName    String?
+  id           String        @id @default(cuid())
+  lastName     String?
+  phoneNumber  String?
+  updatedAt    DateTime      @updatedAt
+}
+
+model AgentAssignment {
+  agentName  String?
+  createdAt  DateTime  @default(now())
+  id         String    @id @default(cuid())
+  property   Property? @relation(fields: [propertyId], references: [id])
+  propertyId String?
+  updatedAt  DateTime  @updatedAt
+}
+
+model Appointment {
+  client     Client?   @relation(fields: [clientId], references: [id])
+  clientId   String?
+  createdAt  DateTime  @default(now())
+  date       DateTime?
+  id         String    @id @default(cuid())
+  property   Property? @relation(fields: [propertyId], references: [id])
+  propertyId String?
+  time       DateTime?
+  updatedAt  DateTime  @updatedAt
+}
+
+enum EnumPropertyTypeField {
+  Option1
+}
